@@ -1,0 +1,166 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Deadlines
+{% endblock %}
+
+{% block main %}
+<section>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5 sched-input">
+            <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <form action="/deadlines" method="post">
+                    <div class="form-outline form-white">
+                        <textarea required class="form-control" rows="2" id="comment" name="note"></textarea>
+                        <label class="form-label" for="formWhite">Note</label>
+                    </div>
+                    <br>
+                    <div class="form-outline form-white">
+                        <input required type="date" name='deadline' id="formWhite" class="form-control" />
+                        <label class="form-label" for="formWhite">Deadline</label>
+                    </div>
+                    <br>
+                    <div class="form-outline form-white">
+                        <button name="add" type="submit" class="btn btn-light">
+                            <i class="bi bi-plus-lg fa-lg"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container mt-3">
+        <table class="table table-striped table-hover table-dark">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Assignment</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Deadline</th>
+                    <th scope="col"> </th>
+                    <th scope="col" colspan="3">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deadline in deadlines %}
+                {% if deadline[3] != 'Completed' %}
+                <tr>
+                    <td>{{ deadline[1]}}</td>
+                    <td>{{ deadline[3]}}</td>
+                    <td>{{ deadline[2]}}</td>
+                    <td>
+                        <div class="form-check">
+                            <form method="post" action="{{ url_for('dl_check', dl_id=deadline[0]) }}">
+                                <input onChange="this.form.submit()" class="form-check-input" type="checkbox" id="flexCheckDefault" />
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark"data-mdb-toggle="modal" data-mdb-target="#dlModal">
+                        Edit
+                        </button>
+                        <div class="modal fade" id="dlModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="post" action="{{ url_for('dl_edit', dl_id=deadline[0]) }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label style="text-align:left;" for="recipient-name" class="col-form-label">New Note:
+                                            </label>
+                                            <textarea required rows="3" id="comment" name="new-note" type="text" class="form-control" id="recipient-name">
+                                            </textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="message-text" class="col-form-label">New Date:</label>
+                                            <input required type="date" name='new-date' id="formWhite" class="form-control"
+                                            value="{{ deadline[2]}}" id="message-text"/>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form class="inline-form" method="post" action="{{ url_for('dl_delete', dl_id=deadline[0]) }}">
+                            <button name="delete" value="Delete" type="submit" class="btn-close btn-close-white" aria-label="Close">
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                {% for deadline in deadlines %}
+                {% if deadline[3] == 'Completed' %}
+                <tr>
+                    <td>{{ deadline[1]}}</td>
+                    <td>{{ deadline[3]}}</td>
+                    <td>{{ deadline[2]}}</td>
+                    <td>
+                        <div class="form-check">
+                            <form method="post" action="{{ url_for('dl_rmcheck', dl_id=deadline[0]) }}">
+                                <input onChange="this.form.submit()" class="form-check-input" type="checkbox" id="flexCheckDefault" checked/>
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark"
+                        data-mdb-toggle="modal" data-mdb-target="#dlModal">
+                        Edit
+                        </button>
+                        <div class="modal fade" id="dlModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="post" action="{{ url_for('dl_edit', dl_id=deadline[0]) }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label style="text-align:left;" for="recipient-name" class="col-form-label">New Note:
+                                            </label>
+                                            <textarea required rows="3" id="comment" name="new-note" type="text" class="form-control" id="recipient-name">
+                                            </textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="message-text" class="col-form-label">New Date:</label>
+                                            <input requiredtype="date" name='new-date' id="formWhite" class="form-control"
+                                            value="{{ deadline[2]}}" id="message-text"/>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form class="inline-form" method="post" action="{{ url_for('dl_delete', dl_id=deadline[0]) }}">
+                            <button name="delete" value="Delete" type="submit" class="btn-close btn-close-white" aria-label="Close">
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<div class="container">
+    <form method="post" action="{{ url_for('dl_clear') }}">
+        <button type="submit" class="btn btn-outline-danger btn-rounded" data-mdb-ripple-color="dark">Clear</button>
+    </form>
+</div>
+{% endblock %}

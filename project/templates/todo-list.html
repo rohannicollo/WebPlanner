@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Todo
+{% endblock %}
+
+{% block main %}
+<section>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5 sched-input">
+            <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <form action="/todo-list" method="post">
+                    <div class="form-outline form-white">
+                        <textarea required class="form-control" rows="2" id="comment" name="todo"></textarea>
+                        <label class="form-label" for="formWhite">Note</label>
+                    </div>
+                    <br>
+                    <div class="form-outline form-white">
+                        <button name="add" type="submit" class="btn btn-light">
+                            <i class="bi bi-plus-lg fa-lg"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container mt-3 list-group list-group-light">
+        {% for todo in todos %}
+        <li class="list-group-item list-group-item-action px-3 border-0 rounded-3 mb-2  list-group-item-dark">
+            {% if todo[2] == False %}
+            <form method="post" action="{{ url_for('todo_check', todo_id=todo[0]) }}">
+                <input onChange="this.form.submit()" class="form-check-input" id="checkboxExample1" type="checkbox"/>
+                <label class="form-check-label" for="checkboxExample1">{{ todo[1] }}</label>
+            </form>
+            {% else %}
+            <form method="post" action="{{ url_for('todo_rmcheck', todo_id=todo[0]) }}">
+                <input onChange="this.form.submit()" class="form-check-input" id="checkboxExample1" type="checkbox" checked/>
+                <label class="form-check-label" for="checkboxExample1">{{ todo[1] }}</label>
+            </form>
+            {% endif %}
+            <span class="right">
+                <form method="post" action="{{ url_for('todo_delete', todo_id=todo[0]) }}">
+                    <button name="delete" value="Delete" type="submit" class="btn-close" aria-label="Close"></button>
+                </form>
+                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark" data-mdb-ripple-color="dark" data-mdb-toggle="modal" data-mdb-target="#todoModal">
+                Edit
+                </button>
+            </span>
+        </li>
+        <div class="modal fade" id="todoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{{ url_for('todo_edit', todo_id=todo[0]) }}">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="col-form-label">New Note:</label>
+                                <textarea required rows="2" id="comment" name="new-note" type="text" class="form-control">
+                                </textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+<section>
+    <div class="container mt-3">
+        <form method="post" action="{{ url_for('todo_clear') }}">
+            <button type="submit" class="btn btn-outline-danger btn-rounded" data-mdb-ripple-color="dark">Clear</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

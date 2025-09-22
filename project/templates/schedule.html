@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block main %}
+<section>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5 sched-input">
+            <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <form action="/schedule" method="post">
+                    <div class="form-outline form-white">
+                        <textarea required class="form-control" rows="3" id="comment" name="note"></textarea>
+                        <label class="form-label" for="formWhite">Note</label>
+                    </div>
+                    <br>
+                    <div class="form-outline form-white">
+                        <input required type="date" name='date' id="formWhite" class="form-control" />
+                        <label class="form-label" for="formWhite">Date</label>
+                    </div>
+                    <br>
+                    <div class="form-outline form-white">
+                        <button name="add" type="submit" class="btn btn-light">
+                            <i class="bi bi-plus-lg fa-lg"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container mt-3">
+        <table class="table table-dark table-striped">
+          <tbody>
+            {% for schedule in schedules %}
+            <tr">
+              <td>{{ schedule[0] }}</td>
+            </tr>
+            <tr>
+                <td>
+                    {{ schedule[1] }}
+                    <span class="float-right right">
+                        <form class="inline-form" method="post" action="{{ url_for('sched_delete', sched_id=schedule[2]) }}">
+                            <button name="delete" value="Delete" type="submit" class="btn-close btn-close-white" aria-label="Close">
+                            </button>
+                        </form>
+                        <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark" data-mdb-toggle="modal" data-mdb-target="#schedModal">
+                        Edit
+                        </button>
+                    </span>
+                    <span>
+                        <div class="modal fade" id="schedModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{{ url_for('sched_edit', sched_id=schedule[2]) }}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label style="text-align:left;" for="recipient-name" class="col-form-label">New Note:
+                                                </label>
+                                                <textarea required rows="3" id="comment" name="new-note" class="form-control id="recipient-name">
+                                                </textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="message-text" class="col-form-label">New Date:</label>
+                                                <input required type="date" name='new-date' id="formWhite" class="form-control" id="message-text" value="{{schedule[0]}}"/>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+</section>
+<section>
+    <div class="container">
+        <form method="post" action="{{ url_for('sched_clear') }}">
+            <button type="submit" class="btn btn-outline-danger btn-rounded" data-mdb-ripple-color="dark">Clear</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post" action="{{ url_for('sched_edit', sched_id=schedule[2]) }}">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">New Note:</label>
+                    <textarea required rows="3" id="comment" name="new-note" type="text" class="form-control" id="recipient-name">
+                    </textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="message-text" class="col-form-label">New Date:</label>
+                    <input required type="date" name='new-date' id="formWhite" class="form-control" id="message-text"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
